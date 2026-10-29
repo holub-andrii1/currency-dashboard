@@ -1,0 +1,50 @@
+{% load static %}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Hryvnia Rates{% endblock %} · NBU dashboard</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar__inner">
+      <a class="brand" href="{% url 'dashboard' %}">
+        <span class="brand__mark">₴</span> Hryvnia Rates
+      </a>
+      <nav class="nav">
+        <a href="{% url 'dashboard' %}" {% if request.resolver_match.url_name == 'dashboard' %}class="active"{% endif %}>Dashboard</a>
+        <a href="{% url 'currency_list' %}" {% if request.resolver_match.url_name == 'currency_list' %}class="active"{% endif %}>Currencies</a>
+        <a href="{% url 'converter' %}" {% if request.resolver_match.url_name == 'converter' %}class="active"{% endif %}>Converter</a>
+        <a href="/api/">API</a>
+      </nav>
+      <div class="auth">
+        {% if user.is_authenticated %}
+          <span class="muted">{{ user.username }}</span>
+          <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="link-button">Log out</button>
+          </form>
+        {% else %}
+          <a href="{% url 'login' %}">Log in</a>
+          <a class="button button--small" href="{% url 'signup' %}">Sign up</a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    {% for message in messages %}
+      <div class="notice notice--{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="container footer muted">
+    Official exchange rates of the
+    <a href="https://bank.gov.ua/en/markets/exchangerates" rel="noopener">National Bank of Ukraine</a>.
+    {% if latest_date %}Latest data: {{ latest_date|date:"d.m.Y" }}.{% endif %}
+  </footer>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

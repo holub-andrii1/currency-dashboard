@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<section>
+  <div class="section-head">
+    <h1>{% if is_custom_watchlist %}Your watchlist{% else %}Popular currencies{% endif %}</h1>
+    {% if not is_custom_watchlist %}
+      <p class="muted">
+        {% if user.is_authenticated %}
+          <a href="{% url 'currency_list' %}">Star currencies</a> to build your own watchlist.
+        {% else %}
+          <a href="{% url 'signup' %}">Sign up</a> to build your own watchlist.
+        {% endif %}
+      </p>
+    {% endif %}
+  </div>
+
+  <div class="cards">
+    {% for card in cards %}
+      <a class="card {% if card.currency.code == currency.code %}card--active{% endif %}"
+         href="?currency={{ card.currency.code }}&period={{ period }}">
+        <div class="card__code">{{ card.currency.code }}</div>
+        <div class="card__name muted">{{ card.currency.name }}</div>
+        <div class="card__rate">{{ card.rate|floatformat:4 }} <span class="muted">₴</span></div>
+        {% if card.change is not None %}
+          <div class="delta {% if card.change > 0 %}delta--up{% elif card.change < 0 %}delta--down{% endif %}">
+            {% if card.change > 0 %}▲ +{% elif card.change < 0 %}▼ {% else %}■ {% endif %}{{ card.change|floatformat:4 }}
+            ({{ card.change_pct }}%)
+          </div>
+        {% endif %}
+      </a>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="panel">
+  <form method="get" class="chart-controls" id="chart-form">
+    <label>
+      <span class="visually-hidden">Currency</span>
+      {{ form.currency }}
+    </label>
+    <div class="segmented" role="radiogroup" aria-label="Period">
+      {% for value, label in form.fields.period.choices %}
+        <label>
+          <input type="radio" name="period" value="{{ value }}" {% if value == period %}checked{% endif %}>
+          <span>{{ label }}</span>
+        </label>
+      {% endfor %}
+    </div>
+    <noscript><button type="submit" class="button">Show</button></noscript>
+  </form>
+
+  <h2>{{ currency.code }} <span class="muted">/ UAH</span></h2>
+  <p class="muted">{{ currency.name }}</p>
+
+  {% if stats %}
+    <dl class="stats">
+      <div><dt>Latest</dt><dd>{{ stats.latest|floatformat:4 }}</dd></div>
+      <div><dt>Change</dt>
+        <dd class="{% if stats.change > 0 %}delta--up{% elif stats.change < 0 %}delta--down{% endif %}">
+          {% if stats.change > 0 %}+{% endif %}{{ stats.change|floatformat:4 }} ({{ stats.change_pct }}%)
+        </dd>
+      </div>
+      <div><dt>Min</dt><dd>{{ stats.minimum|floatformat:4 }}</dd></div>
+      <div><dt>Max</dt><dd>{{ stats.maximum|floatformat:4 }}</dd></div>
+      <div><dt>Average</dt><dd>{{ stats.average|floatformat:4 }}</dd></div>
+    </dl>
+    <div class="chart-box">
+      <canvas id="rate-chart" aria-label="{{ currency.code }} rate chart" role="img"></canvas>
+    </div>
+  {% else %}
+    <p class="notice">No rates stored for this period.</p>
+  {% endif %}
+</section>
+
+{{ chart_data|json_script:"chart-data" }}
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

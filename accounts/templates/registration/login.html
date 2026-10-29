@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Log in{% endblock %}
+
+{% block content %}
+<div class="auth-box panel">
+  <h1>Log in</h1>
+  <form method="post" class="form">
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+      <div class="notice notice--error">{{ form.non_field_errors|join:" " }}</div>
+    {% endif %}
+    {% for field in form %}
+      <div class="field">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+      </div>
+    {% endfor %}
+    <input type="hidden" name="next" value="{{ next }}">
+    <button type="submit" class="button">Log in</button>
+  </form>
+  <p class="muted">No account? <a href="{% url 'signup' %}">Sign up</a></p>
+</div>
+{% endblock %}

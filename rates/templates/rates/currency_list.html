@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Currencies{% endblock %}
+
+{% block content %}
+<div class="section-head">
+  <h1>All currencies</h1>
+  <form method="get" class="search">
+    <input type="search" name="q" value="{{ query }}" placeholder="Search by code or name" aria-label="Search">
+  </form>
+</div>
+
+{% if rows %}
+<div class="panel panel--flush">
+  <table class="table">
+    <thead>
+      <tr>
+        <th class="col-star" aria-label="Favourite"></th>
+        <th>Code</th>
+        <th>Currency</th>
+        <th class="num">Rate, ₴</th>
+        <th class="num">Change</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in rows %}
+      <tr>
+        <td class="col-star">
+          {% if user.is_authenticated %}
+            <form method="post" action="{% url 'toggle_favorite' row.currency.code %}">
+              {% csrf_token %}
+              <input type="hidden" name="next" value="{{ request.get_full_path }}">
+              {% if row.currency.pk in favorite_ids %}
+                <button class="star star--on" title="Remove from watchlist" aria-label="Remove {{ row.currency.code }} from watchlist">★</button>
+              {% else %}
+                <button class="star" title="Add to watchlist" aria-label="Add {{ row.currency.code }} to watchlist">☆</button>
+              {% endif %}
+            </form>
+          {% endif %}
+        </td>
+        <td><a href="{% url 'dashboard' %}?currency={{ row.currency.code }}"><strong>{{ row.currency.code }}</strong></a></td>
+        <td>{{ row.currency.name }}</td>
+        <td class="num">{{ row.rate|floatformat:4 }}</td>
+        <td class="num {% if row.change > 0 %}delta--up{% elif row.change < 0 %}delta--down{% endif %}">
+          {% if row.change is not None %}
+            {% if row.change > 0 %}+{% endif %}{{ row.change_pct }}%
+          {% else %}—{% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+  <p class="notice">No currencies found{% if query %} for “{{ query }}”{% endif %}.</p>
+{% endif %}
+{% endblock %}

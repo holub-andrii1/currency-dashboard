@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Converter{% endblock %}
+
+{% block content %}
+<h1>Currency converter</h1>
+<p class="muted">Cross rates are calculated through the hryvnia using official NBU rates.</p>
+
+<div class="converter">
+  <form method="get" class="panel form">
+    {% if form.non_field_errors %}
+      <div class="notice notice--error">{{ form.non_field_errors|join:" " }}</div>
+    {% endif %}
+    {% for field in form %}
+      <div class="field">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}<small class="muted">{{ field.help_text }}</small>{% endif %}
+        {% for error in field.errors %}<small class="error">{{ error }}</small>{% endfor %}
+      </div>
+    {% endfor %}
+    <button type="submit" class="button">Convert</button>
+  </form>
+
+  <div class="panel result">
+    {% if conversion %}
+      <div class="result__from">{{ conversion.amount|floatformat:2 }} {{ conversion.from_code }} =</div>
+      <div class="result__to">{{ conversion.result|floatformat:2 }} {{ conversion.to_code }}</div>
+      <p class="muted">
+        1 {{ conversion.from_code }} = {{ conversion.rate|floatformat:6 }} {{ conversion.to_code }}<br>
+        NBU rate of {{ conversion.date|date:"d.m.Y" }}
+      </p>
+    {% elif error %}
+      <div class="notice notice--error">{{ error }}</div>
+    {% else %}
+      <p class="muted">Enter an amount and choose two currencies.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

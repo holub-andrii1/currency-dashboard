@@ -1,0 +1,232 @@
+{
+  "info": {
+    "_postman_id": "181770b7-c2bd-4a37-b6ca-fa873ba57aa3",
+    "name": "Hryivnya Rates API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "43457056",
+    "_collection_link": "https://go.postman.co/collection/43457056-181770b7-c2bd-4a37-b6ca-fa873ba57aa3?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Currency_List",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/currencies/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "currencies",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "USD",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/currencies/USD/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "currencies",
+            "USD",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "USD_history",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/currencies/USD/rates/?start=2026-09-01&end=2026-10-24",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "currencies",
+            "USD",
+            "rates",
+            ""
+          ],
+          "query": [
+            {
+              "key": "start",
+              "value": "2026-09-01"
+            },
+            {
+              "key": "end",
+              "value": "2026-10-24"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "EUR_stats",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/currencies/EUR/stats/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "currencies",
+            "EUR",
+            "stats",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "convertation",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status is 200\", () => {\n    pm.response.to.have.status(200);\n});\n\npm.test(\"Result is a positive number\", () => {\n    const body = pm.response.json();\n    pm.expect(Number(body.result)).to.be.above(0);\n});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/convert/?amount=100&from=USD&to=EUR",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "convert",
+            ""
+          ],
+          "query": [
+            {
+              "key": "amount",
+              "value": "100"
+            },
+            {
+              "key": "from",
+              "value": "USD"
+            },
+            {
+              "key": "to",
+              "value": "EUR"
+            }
+          ]
+        }
+      },
+      "response": [
+        {
+          "name": "convertation",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/convert/?amount=100&from=USD&to=EUR",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "convert",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "amount",
+                  "value": "100"
+                },
+                {
+                  "key": "from",
+                  "value": "USD"
+                },
+                {
+                  "key": "to",
+                  "value": "EUR"
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Date",
+              "value": "Thu, 29 Oct 2026 09:17:13 GMT"
+            },
+            {
+              "key": "Server",
+              "value": "WSGIServer/0.2 CPython/3.13.16"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "Vary",
+              "value": "Accept, Cookie"
+            },
+            {
+              "key": "Allow",
+              "value": "GET, OPTIONS"
+            },
+            {
+              "key": "X-Frame-Options",
+              "value": "DENY"
+            },
+            {
+              "key": "Content-Length",
+              "value": "98"
+            },
+            {
+              "key": "X-Content-Type-Options",
+              "value": "nosniff"
+            },
+            {
+              "key": "Referrer-Policy",
+              "value": "same-origin"
+            },
+            {
+              "key": "Cross-Origin-Opener-Policy",
+              "value": "same-origin"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n  \"amount\": \"100.00\",\n  \"from\": \"USD\",\n  \"to\": \"EUR\",\n  \"rate\": \"0.898077\",\n  \"result\": \"89.81\",\n  \"date\": \"2026-10-29\"\n}"
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": ""
+    }
+  ]
+}

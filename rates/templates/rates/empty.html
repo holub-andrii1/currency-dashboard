@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}No data yet{% endblock %}
+
+{% block content %}
+<div class="panel empty">
+  <h1>No exchange rates yet</h1>
+  <p>Load the official NBU rates for the last year:</p>
+  <pre><code>python manage.py fetch_rates</code></pre>
+  <p class="muted">Run the command again any time; it only downloads days that are missing.</p>
+</div>
+{% endblock %}
